@@ -137,9 +137,11 @@ shinyServer(function(input, output) {
   # bayesNet dataFrame needs to be processed a bit more
   getBayesDf <- reactive({
     df <- readData()
+    
     # select variables for model
     selected_vars <- df[,colnames(df) %in% input$variables]
     selected_vars  <- na.omit(selected_vars)
+    
     # make sure all character columns are converted to factors
     selected_vars[sapply(selected_vars, is.character)] <- lapply(selected_vars[sapply(selected_vars, is.character)], as.factor)
     selected_vars[sapply(selected_vars, is.integer)] <- lapply(selected_vars[sapply(selected_vars, is.integer)], as.numeric)
@@ -167,7 +169,7 @@ shinyServer(function(input, output) {
   coltypes_for_lw <- reactive({
     df <- getBayesDf()
     if (input$method == "lw") {
-      df <- df[,colnames(df)!=input$cpDistVar]
+      df <- df[,colnames(df) != input$cpDistVar]
     }
     col_types <- sapply(df, type_sum) %>% t() %>% as.data.frame()
     colnames(col_types) <- colnames(df)
