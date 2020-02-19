@@ -74,3 +74,4 @@ shinyUI(navbarPage(theme= shinytheme("flatly"),
                             )
                    )
 ))
+
