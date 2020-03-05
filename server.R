@@ -265,6 +265,44 @@ shinyServer(function(input, output) {
     )
   })
   
+  # do_sampler
+  do_sampler <- reactive({
+    
+    # given network, and node, return parents
+    get_parents <- function(network, variable) {
+      parents <- row.names(network)[network[,variable] == 1] # get row names where there is an edge to the indicated variable
+      return(parents)
+    }
+    
+    # do operator (delete parental connection and return network)
+    do_variable <- function(network, variable) {
+      parents <- get_parents(network, variable)
+      do_network <- network
+      do_network[parents, variable] <- 0
+      return(do_network)
+    }
+    
+    network <- bayesNetStruc()
+    adj_mat <- amat(network)
+    amat(network) <- do_variable(adj_mat, input$x)
+    do_fitted <- bn.fit(x = network,
+                        data = getBayesDf(),
+                        method = "mle")
+    do_sample <- rbn(do_fitted, n = 100000)
+    return(do_sample)
+  })
+  
+  output$causal_plot <- renderPlot({
+    do_samples <- do_sampler()
+    colnames(do_samples)[colnames(do_samples) == input$x] <- "x"
+    colnames(do_samples)[colnames(do_samples) == input$y] <- "y"
+    do_samples %>% ggplot(aes(x, y)) + geom_bin2d() +
+      scale_fill_continuous(type = "viridis") +
+      theme_bw() + 
+      geom_smooth()
+  })
+  
+  
   # plot Bayesian Network
   observeEvent(input$updateStructure, {
     output$bayesNetPlot <- renderPlot({
@@ -277,6 +315,7 @@ shinyServer(function(input, output) {
       })
     })
   })
+  
   # fit Bayesian Network
   fitBayesNet <- reactive({
     df <- getBayesDf()
