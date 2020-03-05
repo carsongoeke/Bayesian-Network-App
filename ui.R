@@ -11,19 +11,19 @@ library(shiny)
 library(shinythemes)
 
 # Define UI for application that outputs the results of linear regression or decision tree
-shinyUI(navbarPage(theme= shinytheme("flatly"),
+shinyUI(navbarPage(theme = shinytheme("darkly"),
                    # Application title
                    title = "Bayesian Network App",
                    # Bayesian Network
                    tabPanel("Model",
-                            type="tabs",
+                            type = "tabs",
                             # Sidebar with stuff
                             sidebarLayout(
                               sidebarPanel(
                                 # Upload data file
-                                fileInput(inputId="dataFile",
-                                          label="Choose Dataset (.csv or .xlsx)",
-                                          accept=c(".csv", ".xlsx")),
+                                fileInput(inputId = "dataFile",
+                                          label = "Choose Dataset (.csv or .xlsx)",
+                                          accept = c(".csv", ".xlsx")),
                                 p("The file should have the header on the first row."),
                                 # Select Variables
                                 uiOutput("moreControls"),
@@ -47,7 +47,8 @@ shinyUI(navbarPage(theme= shinytheme("flatly"),
                                             tabPanel("Diagram",
                                                      plotOutput("bayesNetPlot"),
                                                      uiOutput("causalEffectControl"),
-                                                     withMathJax(uiOutput("effectText"))),
+                                                     withMathJax(uiOutput("effectText")),
+                                                     plotOutput("causal_plot")),
                                             tabPanel("Queries",
                                                      radioButtons(inputId="queryMethod", label="Query Method", choices=c("GUI", "Text"), inline=T),
                                                      uiOutput("paramSelection"),
@@ -74,4 +75,3 @@ shinyUI(navbarPage(theme= shinytheme("flatly"),
                             )
                    )
 ))
-
